@@ -1,9 +1,15 @@
 #!/usr/bin/env php
 <?php
 
-use App\Kernel;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Debug\Debug;
 
 set_time_limit(0);
@@ -15,8 +21,11 @@ if (!class_exists(Application::class)) {
 }
 
 $input = new ArgvInput();
-if (null !== $env = $input->getParameterOption(['--env', '-e'], null, true)) {
-    putenv('APP_ENV='.$_SERVER['APP_ENV'] = $_ENV['APP_ENV'] = $env);
+if (null !== $_ENV['APP_ENV'] = $input->getParameterOption(['--env', '-e'], null, true)) {
+    putenv('APP_ENV=' . $_ENV['APP_ENV']);
+
+    // force loading .env files when --env is defined
+    $_SERVER['APP_ENV'] = null;
 }
 
 if ($input->hasParameterOption('--no-debug', true)) {
@@ -27,12 +36,93 @@ require dirname(__DIR__).'/config/bootstrap.php';
 
 if ($_SERVER['APP_DEBUG']) {
     umask(0000);
-
     if (class_exists(Debug::class)) {
         Debug::enable();
     }
 }
 
-$kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
+$appName = $_SERVER['APP_NAME'] ?? 'frontal';
+
+$kernel = new \App\VirtualKernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG'], $appName);
 $application = new Application($kernel);
+$application
+    ->getDefinition()
+    ->addOption(new InputOption('--kernel', '-k', InputOption::VALUE_REQUIRED, 'The Kernel name', $appName));
+
+$application->add(new class extends Command {
+    /**
+     * @var string
+     */
+    protected static $defaultName = 'create-app';
+
+    protected function configure(): void
+    {
+        $this
+            ->setDescription('Create a new app')
+            ->getDefinition()
+            ->addArgument(new InputArgument('name', InputArgument::REQUIRED, 'The application name'))
+        ;
+    }
+
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|void|null
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $io = new SymfonyStyle($input, $output);
+        $io->title('Application Creator');
+        $projectDir = \dirname(__DIR__);
+        $name = ucfirst($input->getArgument('name'));
+        // config/<name>/bundles.php
+        $nameLower = strtolower($name);
+        if (!mkdir($appConfigDir = $projectDir.'/config/'.$nameLower) && !is_dir($appConfigDir)) {
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $appConfigDir));
+        }
+        file_put_contents($appConfigDir.'/bundles.php', "<?php\n\nreturn [];");
+        $io->writeln(sprintf('Created <fg=green>"%s"</>', 'config/'.$nameLower.'/bundles.php'));
+        // src/<Name>/Controller/.gitignore
+        if (!mkdir($appSrcDir = $projectDir.'/src/'.$name.'/Controller', 0777, true) && !is_dir($appSrcDir)) {
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $appSrcDir));
+        }
+        file_put_contents($appSrcDir.'/.gitignore', '');
+        $io->writeln(sprintf('Created <fg=green>"%s"</>', 'src/'.$name.'/Controller/.gitignore'));
+        // tests/<Name>/<Name>WebTestCase.php
+        if (!mkdir($appTestDir = $projectDir.'/tests/'.$name) && !is_dir($appTestDir)) {
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $appTestDir));
+        }
+        file_put_contents($appTestDir.'/'.$name.'WebTestCase.php', <<<PHP
+<?php
+namespace {$name}\Tests;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+abstract class {$name}WebTestCase extends WebTestCase
+{
+    protected static function createKernel(array \$options = array())
+    {
+        return new \VirtualKernel(
+            \$options['environment'] ?? 'test',
+            \$options['debug'] ?? true,
+            '{$nameLower}'
+        );
+    }
+}
+PHP
+        );
+        $io->writeln(sprintf('Created <fg=green>"%s"</>', 'tests/'.$name.'/'.$name.'WebTestCase.php'));
+
+        if (is_file($projectDir.'/composer.json') && is_readable($projectDir.'/composer.json')) {
+            $composerJson = json_decode(file_get_contents($projectDir.'/composer.json'), true);
+            $composerJson['autoload']['psr-4'][$name.'\\'] = 'src/'.$name.'/';
+            $composerJson['autoload-dev']['psr-4'][$name.'\\Tests\\'] = 'tests/'.$name.'/';
+            file_put_contents($projectDir.'/composer.json', json_encode($composerJson, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)."\n");
+        }
+
+        $io->writeln('Updated autoload PSR-4 config in <fg=green>"composer.json"</>');
+        $io->comment('You might need to update the autoloader file: <comment>composer dump-autoload</>');
+        $io->success(sprintf('The new application "%s" was successfully created.', $name));
+        $io->comment(sprintf('Check it by running: <comment>bin/console about -k %s</>.', $nameLower));
+    }
+});
+
 $application->run($input);
