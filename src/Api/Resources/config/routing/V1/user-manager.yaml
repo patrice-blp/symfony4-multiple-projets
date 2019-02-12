@@ -1,0 +1,9 @@
+api.v1.user.list:
+    path: /user/{username}
+    defaults: { _controller: App\Api\Controller\UserManagerController::userInfo }
+    methods: [GET]
+
+api.v1.user.register:
+    path: /user
+    defaults: { _controller: App\Api\Controller\UserManagerController::createUser }
+    methods: [POST]
