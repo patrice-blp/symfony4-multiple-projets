@@ -1,0 +1,39 @@
+security:
+    providers:
+        frontal_user_provider:
+            id: App\Frontal\Security\UserProvider
+
+    encoders:
+        App\Frontal\Entity\User:
+            algorithm: bcrypt
+            cost: 12
+
+    firewalls:
+        main:
+            provider: frontal_user_provider
+            anonymous: ~
+            logout:
+                path: frontal.logout
+                target: frontal.login
+                invalidate_session: true
+                delete_cookies: true
+            form_login:
+                csrf_token_generator: security.csrf.token_manager
+                check_path: frontal.login
+                login_path: frontal.login
+            guard:
+                authenticators:
+                    - App\Frontal\Security\LoginFormAuthenticator
+            access_denied_handler: App\Frontal\Security\AccessDeniedHandler
+
+    role_hierarchy:
+        ROLE_PAGE_1: ROLE_USER
+        ROLE_PAGE_2: ROLE_USER
+        ROLE_PAGE_3: ROLE_USER
+        ROLE_ADMIN:  [ROLE_PAGE_1, ROLE_PAGE_2, ROLE_PAGE_3]
+
+    access_control:
+        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/page-1, roles: ROLE_PAGE_1 }
+        - { path: ^/page-2, roles: ROLE_PAGE_2 }
+        - { path: ^/page-3, roles: ROLE_PAGE_3 }

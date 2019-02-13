@@ -4,6 +4,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    apiUrl: http://localhost:9090
 
 services:
     # default configuration for services in *this* file
@@ -22,6 +23,11 @@ services:
     App\Frontal\Controller\:
         resource: '../../src/Frontal/Controller'
         tags: ['controller.service_arguments']
+
+    App\Frontal\EventListener\RedirectUserListener:
+        arguments: ['@security.token_storage', '@router']
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
