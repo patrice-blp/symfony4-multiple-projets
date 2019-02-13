@@ -1,5 +1,5 @@
 auth.v1:
-    resource: "V1/auth.yaml"
+    resource: "V1/security.yaml"
 
 user.manager.v1:
     resource: "V1/user-manager.yaml"

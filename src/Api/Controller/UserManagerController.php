@@ -40,7 +40,7 @@ class UserManagerController extends AbstractController
         $password = $request->request->get('password');
         $role = $request->request->get('role');
 
-        $user = $this->userManager->save($username, $password, [$role]);
+        $user = $this->userManager->save($username, $password, $role);
 
         return $this->json($user);
     }

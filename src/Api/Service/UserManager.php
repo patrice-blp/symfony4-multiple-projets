@@ -73,13 +73,13 @@ class UserManager
     /**
      * @param string $user
      * @param string $password
-     * @param array $role
+     * @param string $role
      * @return array
      *
      * @throws BadRequestException
      * @throws ConflictException
      */
-    public function save(string $user, string $password, array $role): array
+    public function save(string $user, string $password, string $role): array
     {
         $keyName = $this->getKeyName($user);
 
