@@ -129,12 +129,19 @@ class UserManager
 
         try {
             $item = $this->filesAdapter->getItem($keyName);
-            $user = new User(...\array_values($item->get()));
-
-            return $user->getValues();
         } catch (InvalidArgumentException $exception) {
             throw new NotFoundException('Object not found');
         }
+
+        $itemValue = $item->get();
+
+        if (!$itemValue) {
+            throw new NotFoundException('Object not found');
+        }
+
+        $user = new User(...\array_values($itemValue));
+
+        return $user->getValues();
     }
 
     /**
