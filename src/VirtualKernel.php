@@ -26,11 +26,11 @@ class VirtualKernel extends Kernel
 
     /**
      * VirtualKernel constructor.
-     * @param $environment
-     * @param $debug
-     * @param $name
+     * @param string $environment
+     * @param bool $debug
+     * @param string $name
      */
-    public function __construct($environment, $debug, $name)
+    public function __construct(string $environment, bool $debug, string $name)
     {
         $this->name = $name;
 
@@ -62,7 +62,7 @@ class VirtualKernel extends Kernel
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      */
     public function unserialize($data)
     {
@@ -96,7 +96,7 @@ class VirtualKernel extends Kernel
     /**
      * @param ContainerBuilder $container
      * @param LoaderInterface $loader
-     * @throws
+     * @throws \Exception
      */
     protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader): void
     {
@@ -109,7 +109,7 @@ class VirtualKernel extends Kernel
 
     /**
      * @param RouteCollectionBuilder $routes
-     * @throws
+     * @throws \Symfony\Component\Config\Exception\LoaderLoadException
      */
     protected function configureRoutes(RouteCollectionBuilder $routes): void
     {

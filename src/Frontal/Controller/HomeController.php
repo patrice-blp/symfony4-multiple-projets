@@ -22,8 +22,7 @@ class HomeController extends AbstractController
      */
     public function __construct(
         UserClient $userClient
-    )
-    {
+    ) {
         $this->userClient = $userClient;
     }
 
@@ -31,7 +30,8 @@ class HomeController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function index(Request $request): Response {
+    public function index(Request $request): Response
+    {
         if (null === $this->getUser()) {
             return $this->redirectToRoute('frontal.login');
         }
@@ -58,21 +58,24 @@ class HomeController extends AbstractController
     /**
      * @return Response
      */
-    public function pageOne(): Response {
+    public function pageOne(): Response
+    {
         return $this->render('pages/page-index.html.twig');
     }
 
     /**
      * @return Response
      */
-    public function pageTwo(): Response {
+    public function pageTwo(): Response
+    {
         return $this->render('pages/page-index.html.twig');
     }
 
     /**
      * @return Response
      */
-    public function pageThree(): Response {
+    public function pageThree(): Response
+    {
         return $this->render('pages/page-index.html.twig');
     }
 }

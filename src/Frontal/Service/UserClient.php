@@ -25,17 +25,17 @@ class UserClient
      */
     public function __construct(
         ParameterBagInterface $params
-    )
-    {
+    ) {
         $this->client = new Client();
         $this->params = $params;
     }
 
     /**
-     * @param $user
+     * @param string $user
      * @return array|null
      */
-    public function loadUserByUsername(string $user) {
+    public function loadUserByUsername(string $user)
+    {
         $url = $this->buildApiUrl(['api/v1/user', $user]);
 
         try {
@@ -51,7 +51,8 @@ class UserClient
      * @param array $credentials
      * @return array|null
      */
-    public function authenticateUser(array $credentials) {
+    public function authenticateUser(array $credentials)
+    {
         $url = $this->buildApiUrl(['api/v1/auth']);
 
         try {
@@ -72,7 +73,8 @@ class UserClient
      * @param string $role
      * @return array|null
      */
-    public function addUser(string $username, string $password, string $role) {
+    public function addUser(string $username, string $password, string $role)
+    {
         if (!$username || !$password || !$role) {
             return null;
         }
@@ -99,7 +101,8 @@ class UserClient
      * @param array $query
      * @return string
      */
-    private function buildApiUrl(array $paths, array $query = []): string {
+    private function buildApiUrl(array $paths, array $query = []): string
+    {
         $endpoint = $this->params->get('apiUrl');
         $urlPath = '/' . \implode('/', $paths);
         $urlQuery = '';

@@ -40,8 +40,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         CsrfTokenManagerInterface $csrfTokenManager,
         UserPasswordEncoderInterface $passwordEncoder,
         UserClient $userClient
-    )
-    {
+    ) {
         $this->router = $router;
         $this->csrfTokenManager = $csrfTokenManager;
         $this->passwordEncoder = $passwordEncoder;
@@ -138,9 +137,10 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 
     /**
      * @param string $password
-     * @return string
+     * @return bool|string
      */
-    private function encryptPassword(string $password): string {
+    private function encryptPassword(string $password)
+    {
         $options = ['cost' => 12];
 
         return  \password_hash($password, \PASSWORD_DEFAULT, $options);

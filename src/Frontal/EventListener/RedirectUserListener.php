@@ -7,6 +7,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use App\Frontal\Entity\User;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * Class RedirectUserListener
@@ -50,15 +51,17 @@ class RedirectUserListener
      */
     private function isUserLogged(): bool
     {
-        $user = $this->tokenStorage->getToken()->getUser();
-        return $user instanceof User;
+        /** @var TokenInterface $token */
+        $token = $this->tokenStorage->getToken();
+
+        return $token->getUser() instanceof User;
     }
 
     /**
-     * @param $currentRoute
+     * @param string $currentRoute
      * @return bool
      */
-    private function isAuthenticatedUserOnAnonymousPage($currentRoute): bool
+    private function isAuthenticatedUserOnAnonymousPage(string $currentRoute): bool
     {
         return \in_array($currentRoute, ['frontal.login']);
     }

@@ -26,10 +26,10 @@ class User implements UserInterface, EquatableInterface
     /**
      * @param string $username
      * @param string $password
-     * @param $salt
+     * @param string $salt
      * @param array $roles
      */
-    public function __construct(string $username, $password, $salt, array $roles)
+    public function __construct(string $username, string $password, string $salt, array $roles)
     {
         /** @var string username */
         $this->username = $username;
