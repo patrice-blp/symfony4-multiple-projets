@@ -1,0 +1,28 @@
+<h2 class="pt-5">Add user</h2>
+
+{% for label, messages in app.flashes(['warning', 'notice']) %}
+    {% for message in messages %}
+        <div class="alert alert-{{ label }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<form action="{{ path('frontal.index') }}" method="post">
+    <label for="inputUsername">Username</label>
+    <input type="text" id="inputUsername" class="form-control" placeholder="Type username" name="username" required autofocus>
+
+    <label for="inputPassword">Password</label>
+    <input type="password" id="inputPassword" class="form-control" placeholder="Write a password" name="password" required>
+
+    <label for="inputRole"></label>
+    <select id="inputRole" name="role" class="form-control" required>
+        {% for role in ['ROLE_ADMIN', 'ROLE_PAGE_1', 'ROLE_PAGE_2', 'ROLE_PAGE_3'] %}
+            <option value="{{ role }}">{{ role }}</option>
+        {% endfor %}
+    </select>
+
+    <div class="pt-4">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    </div>
+</form>

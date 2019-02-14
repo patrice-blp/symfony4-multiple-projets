@@ -1,0 +1,26 @@
+frontal.index:
+    path: /
+    controller: App\Frontal\Controller\HomeController::index
+    methods: [GET, POST]
+
+frontal.login:
+    path: /login
+    controller: App\Frontal\Controller\SecurityController::login
+
+frontal.logout:
+    path: /logout
+    controller: App\Frontal\Controller\SecurityController::logout
+    methods: [GET]
+
+frontal.page.one:
+    path: /page-1
+    controller: App\Frontal\Controller\HomeController::pageOne
+
+frontal.page.two:
+    path: /page-2
+    controller: App\Frontal\Controller\HomeController::pageTwo
+
+frontal.page.three:
+    path: /page-3
+    controller: App\Frontal\Controller\HomeController::pageThree
+

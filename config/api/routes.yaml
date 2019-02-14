@@ -1,0 +1,3 @@
+app.v1.router:
+    resource: "../../src/Api/Resources/config/routing/routing.v1.yaml"
+    prefix: /api/v1
