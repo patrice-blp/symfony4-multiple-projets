@@ -1,4 +1,4 @@
-
+dea/
 ###> symfony/framework-bundle ###
 /.env.local
 /.env.local.php
@@ -11,3 +11,5 @@
 ###> symfony/web-server-bundle ###
 /.web-server-pid
 ###< symfony/web-server-bundle ###
+
+.idea/*

@@ -35,13 +35,29 @@ By default ./bin/console will run **_frontal_** APP
 
 ```sh
 $ APP_NAME=frontal ./bin/console s:r or ./bin/console s:r
-$ APP_NAME=api ./bin/console s:r 
+$ APP_NAME=api ./bin/console s:r 0.0.0.0:9090
 ```
 
 And for another projects
 
 ```sh
 $ APP_NAME=projectName ./bin/console s:r 
+```
+
+#### Adding default users
+You can use Postman or any another tool to add a default user
+
+```sh
+http://localhost:9090/api/v1/user
+username=ANY_USERNAME
+passord=YOU_PASSWORD
+role=ROLE_ADMIN
+```
+
+To get user yo can make a following request
+
+```sh
+http://localhost:9090/api/v1/user/anyUserName
 ```
 
 You can use Env variable **APP_NAME** to avoid writing **this** on the console
